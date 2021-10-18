@@ -102,6 +102,10 @@ public abstract non-sealed class ResourceScopeImpl implements ResourceScope, Sco
         return new ImplicitScopeImpl(CleanerFactory.cleaner());
     }
 
+    public static StructuredScope createStructuredScope(Thread thread, ScopeLocal<Object> scope) {
+        return new StructuredScope(thread, scope);
+    }
+
     public static ResourceScopeImpl createConfined(Thread thread, Cleaner cleaner) {
         return new ConfinedScope(thread, cleaner);
     }

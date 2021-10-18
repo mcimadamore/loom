@@ -84,7 +84,6 @@ import static jdk.internal.javac.PreviewFeature.Feature.SCOPE_LOCALS;
  * @param <T> the scope local's type
  * @since 99
  */
-@jdk.internal.javac.PreviewFeature(feature=SCOPE_LOCALS)
 public final class ScopeLocal<T> {
     private final @Stable int hash;
 

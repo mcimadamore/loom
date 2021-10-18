@@ -37,7 +37,7 @@ import java.lang.ref.Reference;
  * owner thread will result in an exception. Because of this restriction, checking the liveness bit
  * can be performed in plain mode.
  */
-final class ConfinedScope extends ResourceScopeImpl {
+class ConfinedScope extends ResourceScopeImpl {
 
     private boolean closed; // = false
     private int lockCount = 0;
@@ -49,7 +49,7 @@ final class ConfinedScope extends ResourceScopeImpl {
     }
 
     @ForceInline
-    public final void checkValidState() {
+    public void checkValidState() {
         if (owner != Thread.currentThread()) {
             throw new IllegalStateException("Attempted access outside owning thread");
         }

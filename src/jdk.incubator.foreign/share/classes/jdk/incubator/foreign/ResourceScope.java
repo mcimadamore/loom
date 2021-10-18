@@ -26,6 +26,7 @@
 package jdk.incubator.foreign;
 
 import jdk.internal.foreign.ResourceScopeImpl;
+import jdk.internal.foreign.StructuredScope;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.ref.Cleaner;
@@ -33,6 +34,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Spliterator;
+import java.util.function.Consumer;
 
 /**
  * A resource scope manages the lifecycle of one or more resources. Resources (e.g. {@link MemorySegment}) associated
@@ -281,5 +283,21 @@ public sealed interface ResourceScope extends AutoCloseable permits ResourceScop
      */
     static ResourceScope globalScope() {
         return ResourceScopeImpl.GLOBAL;
+    }
+
+    /**
+     * Run some action in a structured scope.
+     * @param action
+     */
+    static void ofStructured(Consumer<ResourceScope> action) {
+        ScopeLocal<Object> scope = ScopeLocal.newInstance();
+        StructuredScope structuredScope = ResourceScopeImpl.createStructuredScope(Thread.currentThread(), scope);
+        ScopeLocal.where(scope, StructuredScope.SENTINEL, () -> {
+            try {
+                action.accept(structuredScope);
+            } finally {
+                structuredScope.forceClose();
+            }
+        });
     }
 }
